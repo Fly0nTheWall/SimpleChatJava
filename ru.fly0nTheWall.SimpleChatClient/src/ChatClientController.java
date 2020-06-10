@@ -13,9 +13,9 @@ public class ChatClientController implements ConnectionListener, Runnable{
     private String chatAddress;
     private int chatPort;
     private String clientName;
-    private ServerChatConnection clientChatConnection;
-    private BufferedReader clientConsoleReader = new BufferedReader(new InputStreamReader(System.in));
-    private boolean isInterrupted;
+    private ClientChatConnection clientChatConnection;
+    private final BufferedReader clientConsoleReader = new BufferedReader(new InputStreamReader(System.in));
+    private transient boolean isInterrupted;
 
     public ChatClientController(String chatAddress, int chatPort, String clientName) {
         this.chatAddress = chatAddress;
@@ -45,23 +45,26 @@ public class ChatClientController implements ConnectionListener, Runnable{
     }
 
     @Override
-    public void onReceivingMessage(ServerChatConnection connection, String message) {
-        System.out.println(connection.getConnectionName() + ": " + message);
+    public void onReceivingMessage(ChatConnection connection, String message) {
+        if (message == null) {
+            connection.disconnect();
+        }
+        System.out.println(clientName + message);
     }
 
     @Override
-    public void onException(ServerChatConnection connection, Exception e) {
-        System.out.println(clientName + connection.getConnectionName() + "connection thrown an exception: " + e.getMessage());
+    public void onException(ChatConnection connection, Exception e) {
+        System.out.println(clientName + "connection thrown an exception: " + e.getMessage());
     }
 
     @Override
-    public void onConnection(ServerChatConnection connection) {
-        System.out.println(clientName + connection.getConnectionName() + " connection is ready!");
+    public void onConnection(ChatConnection connection) {
+        System.out.println(clientName + "connection is ready!");
     }
 
     @Override
-    public void onDisconnection(ServerChatConnection connection) {
-        System.out.println(clientName + connection.getConnectionName() + " connection is disconnected!");
+    public void onDisconnection(ChatConnection connection) {
+        System.out.println(clientName + "connection is disconnected!");
         isInterrupted = true;
     }
 }

@@ -3,8 +3,7 @@ import java.net.Socket;
 
 public class ServerChatConnection extends ChatConnection implements Runnable{
 
-
-
+    String connectionName;
 
     ServerChatConnection(ConnectionListener listener, Socket socket) throws IOException{
         connectionListener = listener;
@@ -29,14 +28,7 @@ public class ServerChatConnection extends ChatConnection implements Runnable{
         connectionListener.onDisconnection(this);
     }
 
-    public void sendMessage(String message) {
-        try {
-            sendStream.write(message + "\r\n");
-            sendStream.flush();
-        } catch (IOException e) {
-            connectionListener.onException(this, e);
-        }
-    }
+
 
     private void introduction() {
         sendMessage("Enter your name, please!");
@@ -49,18 +41,8 @@ public class ServerChatConnection extends ChatConnection implements Runnable{
         sendMessage("To disconnect enter \"DISCONNECT\"!");
     }
 
-    public void disconnect() {
-        isInterrupted = true;
-        try {
-            receiveStream.close();
-            sendStream.close();
-            connectionSocket.close();
-        } catch (IOException e) {
-            connectionListener.onException(this, e);
-        }
-    }
-
     public String getConnectionName() {
         return connectionName;
     }
+
 }

@@ -49,47 +49,51 @@ public class ChatServer implements ConnectionListener, Runnable {
         }
     }
 
-    private void sendAll(ServerChatConnection connection, String message) {
-        for (ServerChatConnection serverChatConnection : connectionsList) {
-            if (!(serverChatConnection == connection)) {
-                serverChatConnection.sendMessage(message);
+    private void sendAll(ChatConnection connection, String message) {
+        for (ChatConnection ChatConnection : connectionsList) {
+            if (!(ChatConnection == connection)) {
+                ChatConnection.sendMessage(message);
             }
         }
     }
 
     private void sendAll(String message) {
-        for (ServerChatConnection serverChatConnection : connectionsList) {
-            serverChatConnection.sendMessage(message);
+        for (ChatConnection ChatConnection : connectionsList) {
+            ChatConnection.sendMessage(message);
         }
     }
 
-    private void disconnectConnection(ServerChatConnection connection) {
+    private void disconnectConnection(ChatConnection connection) {
         connection.disconnect();
     }
 
     @Override
-    public void onReceivingMessage(ServerChatConnection connection, String message) {
-        System.out.println(serverName + connection.getConnectionName() + " sent a message: \"" + message + "\"");
+    public void onReceivingMessage(ChatConnection connection, String message) {
+        ServerChatConnection serverConnection = (ServerChatConnection)connection;
+        System.out.println(serverName + serverConnection.getConnectionName() + " sent a message: \"" + message + "\"");
         if (message.equals("null")) onDisconnection(connection);
         if (message.equals("DISCONNECT")) disconnectConnection(connection);
-        sendAll(connection, connection.getConnectionName() + ": " + message);
+        sendAll(connection, serverConnection.getConnectionName() + ": " + message);
     }
 
     @Override
-    public void onException(ServerChatConnection connection, Exception e) {
-        System.out.println(serverName + connection.getConnectionName() + "connection thrown an exception: \"" + e.getMessage() + "\"");
+    public void onException(ChatConnection connection, Exception e) {
+        ServerChatConnection serverConnection = (ServerChatConnection)connection;
+        System.out.println(serverName + serverConnection.getConnectionName() + "connection thrown an exception: \"" + e.getMessage() + "\"");
     }
 
     @Override
-    public void onConnection(ServerChatConnection connection) {
-        System.out.println(serverName + connection.getConnectionName() + " connected!");
-        sendAll(connection.getConnectionName() + " connected!");
+    public void onConnection(ChatConnection connection) {
+        ServerChatConnection serverConnection = (ServerChatConnection)connection;
+        System.out.println(serverName + serverConnection.getConnectionName() + " connected!");
+        sendAll(serverConnection.getConnectionName() + " connected!");
     }
 
     @Override
-    public void onDisconnection(ServerChatConnection connection) {
-        System.out.println(serverName + connection.getConnectionName() + " disconnected!");
+    public void onDisconnection(ChatConnection connection) {
+        ServerChatConnection serverConnection = (ServerChatConnection)connection;
+        System.out.println(serverName + serverConnection.getConnectionName() + " disconnected!");
         connectionsList.remove(connection);
-        sendAll(connection.getConnectionName() + " disconnected!");
+        sendAll(serverConnection.getConnectionName() + " disconnected!");
     }
 }
