@@ -1,6 +1,6 @@
 public interface ConnectionListener {
-    void onReceivingMessage(ChatConnection connection, String message);
-    void onException(ChatConnection connection, Exception e);
-    void onConnection(ChatConnection connection);
-    void onDisconnection(ChatConnection connection);
+    void onReceivingMessage(ServerChatConnection connection, String message);
+    void onException(ServerChatConnection connection, Exception e);
+    void onConnection(ServerChatConnection connection);
+    void onDisconnection(ServerChatConnection connection);
 }

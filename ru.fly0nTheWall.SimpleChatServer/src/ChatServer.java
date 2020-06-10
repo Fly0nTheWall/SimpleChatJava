@@ -16,7 +16,7 @@ public class ChatServer implements ConnectionListener, Runnable {
     private final int serverPort;
     private final int serverBacklog;
     private ServerSocket serverSocket;
-    private final ArrayList<ChatConnection> connectionsList = new ArrayList<>();
+    private final ArrayList<ServerChatConnection> connectionsList = new ArrayList<>();
     private final String serverName;
     private boolean isShutDown;
 
@@ -39,9 +39,9 @@ public class ChatServer implements ConnectionListener, Runnable {
         while (!isShutDown) {
             try {
                 Socket newSocket = serverSocket.accept();
-                ChatConnection newChatConnection = new ChatConnection(this, newSocket);
-                connectionsList.add(newChatConnection);
-                Thread newChatConnectionThread = new Thread(newChatConnection);
+                ServerChatConnection newServerChatConnection = new ServerChatConnection(this, newSocket);
+                connectionsList.add(newServerChatConnection);
+                Thread newChatConnectionThread = new Thread(newServerChatConnection);
                 newChatConnectionThread.start();
             } catch (IOException e) {
                 System.out.println(serverName + "adding new connection Exc: ");
@@ -49,26 +49,26 @@ public class ChatServer implements ConnectionListener, Runnable {
         }
     }
 
-    private void sendAll(ChatConnection connection, String message) {
-        for (ChatConnection chatConnection : connectionsList) {
-            if (!(chatConnection == connection)) {
-                chatConnection.sendMessage(message);
+    private void sendAll(ServerChatConnection connection, String message) {
+        for (ServerChatConnection serverChatConnection : connectionsList) {
+            if (!(serverChatConnection == connection)) {
+                serverChatConnection.sendMessage(message);
             }
         }
     }
 
     private void sendAll(String message) {
-        for (ChatConnection chatConnection : connectionsList) {
-            chatConnection.sendMessage(message);
+        for (ServerChatConnection serverChatConnection : connectionsList) {
+            serverChatConnection.sendMessage(message);
         }
     }
 
-    private void disconnectConnection(ChatConnection connection) {
+    private void disconnectConnection(ServerChatConnection connection) {
         connection.disconnect();
     }
 
     @Override
-    public void onReceivingMessage(ChatConnection connection, String message) {
+    public void onReceivingMessage(ServerChatConnection connection, String message) {
         System.out.println(serverName + connection.getConnectionName() + " sent a message: \"" + message + "\"");
         if (message.equals("null")) onDisconnection(connection);
         if (message.equals("DISCONNECT")) disconnectConnection(connection);
@@ -76,18 +76,18 @@ public class ChatServer implements ConnectionListener, Runnable {
     }
 
     @Override
-    public void onException(ChatConnection connection, Exception e) {
+    public void onException(ServerChatConnection connection, Exception e) {
         System.out.println(serverName + connection.getConnectionName() + "connection thrown an exception: \"" + e.getMessage() + "\"");
     }
 
     @Override
-    public void onConnection(ChatConnection connection) {
+    public void onConnection(ServerChatConnection connection) {
         System.out.println(serverName + connection.getConnectionName() + " connected!");
         sendAll(connection.getConnectionName() + " connected!");
     }
 
     @Override
-    public void onDisconnection(ChatConnection connection) {
+    public void onDisconnection(ServerChatConnection connection) {
         System.out.println(serverName + connection.getConnectionName() + " disconnected!");
         connectionsList.remove(connection);
         sendAll(connection.getConnectionName() + " disconnected!");
