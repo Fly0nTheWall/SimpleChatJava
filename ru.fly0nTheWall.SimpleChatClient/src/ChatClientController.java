@@ -70,7 +70,7 @@ public class ChatClientController implements ConnectionListener, Runnable{
 
     @Override
     public void onException(ChatConnection connection, Exception e) {
-        System.out.println(clientName + "connection thrown an exception: " + e.getMessage());
+        System.out.println(clientName + "connection thrown an exception: \"" + e.getMessage() + "\"");
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ChatClientController implements ConnectionListener, Runnable{
 
     @Override
     public void onDisconnection(ChatConnection connection) {
-        System.out.println(clientName + "connection is disconnected!");
+        System.out.println(clientName + "disconnected!");
         isShutDown = true;
         try {
             clientConsoleReader.close();

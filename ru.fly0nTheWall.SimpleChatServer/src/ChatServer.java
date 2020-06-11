@@ -68,7 +68,7 @@ public class ChatServer implements ConnectionListener, Runnable {
     }
 
     @Override
-    public void onReceivingMessage(ChatConnection connection, String message) {
+    public synchronized void onReceivingMessage(ChatConnection connection, String message) {
         ServerChatConnection serverConnection = (ServerChatConnection)connection;
         System.out.println(serverName + serverConnection.getConnectionName() + " sent a message: \"" + message + "\"");
         if (message.equals("null")) onDisconnection(connection);
@@ -77,20 +77,24 @@ public class ChatServer implements ConnectionListener, Runnable {
     }
 
     @Override
-    public void onException(ChatConnection connection, Exception e) {
+    public synchronized void onException(ChatConnection connection, Exception e) {
         ServerChatConnection serverConnection = (ServerChatConnection)connection;
-        System.out.println(serverName + serverConnection.getConnectionName() + "connection thrown an exception: \"" + e.getMessage() + "\"");
+        System.out.println(serverName + serverConnection.getConnectionName() + " connection thrown an exception: \"" + e.getMessage() + "\"");
+        if (e.getMessage().equals("Connection reset"))
+        {
+            disconnectConnection(connection);
+        }
     }
 
     @Override
-    public void onConnection(ChatConnection connection) {
+    public synchronized void onConnection(ChatConnection connection) {
         ServerChatConnection serverConnection = (ServerChatConnection)connection;
         System.out.println(serverName + serverConnection.getConnectionName() + " connected!");
         sendAll(serverConnection.getConnectionName() + " connected!");
     }
 
     @Override
-    public void onDisconnection(ChatConnection connection) {
+    public synchronized void onDisconnection(ChatConnection connection) {
         ServerChatConnection serverConnection = (ServerChatConnection)connection;
         System.out.println(serverName + serverConnection.getConnectionName() + " disconnected!");
         connectionsList.remove(connection);
