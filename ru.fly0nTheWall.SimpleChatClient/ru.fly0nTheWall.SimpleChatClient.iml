@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ru.fly0nTheWall.SimpleChatNetwork" exported="" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>

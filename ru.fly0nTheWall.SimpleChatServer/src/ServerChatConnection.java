@@ -3,7 +3,7 @@ import java.net.Socket;
 
 public class ServerChatConnection extends ChatConnection implements Runnable{
 
-    String connectionName;
+    private String connectionName;
 
     ServerChatConnection(ConnectionListener listener, Socket socket) throws IOException{
         connectionListener = listener;

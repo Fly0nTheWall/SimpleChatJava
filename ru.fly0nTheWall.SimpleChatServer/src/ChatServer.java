@@ -50,9 +50,9 @@ public class ChatServer implements ConnectionListener, Runnable {
     }
 
     private void sendAll(ChatConnection connection, String message) {
-        for (ChatConnection ChatConnection : connectionsList) {
-            if (!(ChatConnection == connection)) {
-                ChatConnection.sendMessage(message);
+        for (ServerChatConnection serverChatConnection : connectionsList) {
+            if (!(serverChatConnection == connection)) {
+                serverChatConnection.sendMessage(message);
             }
         }
     }
